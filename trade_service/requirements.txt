@@ -1,0 +1,11 @@
+pandas
+matplotlib
+mplfinance
+nest_asyncio
+keras
+python-dotenv
+requests
+argparse
+schwabdev
+flask
+flask-cors
