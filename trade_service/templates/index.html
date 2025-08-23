@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Hello from Flask + HTMX</h1>
+
+<!-- HTMX button -->
+<button 
+    hx-get="/fragment" 
+    hx-target="#result" 
+    hx-swap="innerHTML">
+    Load Fragment
+</button>
+
+<button 
+    hx-get="/check-auth"
+    hx-trigger="click">
+    Redirect to Schwab
+</button>
+
+<button 
+    hx-get="/auth?"
+    hx-trigger="click">
+    Authorize
+</button>
+
+
+
+<p id="info-box" hx-get="/debug" hx-target="#info-box" hx-trigger="load"></p>
+
+
+<div id="result">
+    <!-- This will be replaced by HTMX request -->
+</div>
+{% endblock %}
