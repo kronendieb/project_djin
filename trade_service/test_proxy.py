@@ -87,6 +87,8 @@ def click_to_edit():
 def callback():
     return redirect(url_for("home", _external=True))
 
+
+### Main Function, creates the app thread to listen for 
 if __name__ == '__main__':
     print(f'Client: {CLIENT_ID}, Redirect: {REDIRECT_URI}, Auth: {AUTH_URL}, Token: {TOKEN_URL}')
     app.run(host='127.0.0.1', port=5000, debug=True)

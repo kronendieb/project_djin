@@ -1,0 +1,23 @@
+{
+  "name": "project_djin",
+  "private": true,
+  "workspaces": ["arena", "forge"],
+  "version": "0.1.0",
+  "description": "Project Djin",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kronendieb/project_djin.git"
+  },
+  "keywords": [],
+  "author": "Cesar Santiago",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/kronendieb/project_djin/issues"
+  },
+  "homepage": "https://github.com/kronendieb/project_djin#readme"
+}

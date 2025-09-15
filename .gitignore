@@ -1,4 +1,8 @@
 .venv
 .envrc
 .env
-trade_service/nginx/ssl/
+*.key
+*.crt
+node_modules/
+forge/node_modules/
+arena/node_modules/
