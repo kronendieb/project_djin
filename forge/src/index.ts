@@ -27,7 +27,7 @@ const app_env = {
 
 
 app.get("/", (req, res) => {
-    console.log(`IP of the request:${req.ip}`)
+    //console.log(`IP of the request:${req.ip}`)
     res.send("This is the index page")
     //res.redirect(`${app_env.auth_url}?client_id=${app_env.key}&redirect_uri=${app_env.callback_url}`)
 });
