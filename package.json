@@ -1,12 +1,19 @@
 {
   "name": "project_djin",
   "private": true,
-  "workspaces": ["arena", "forge"],
   "version": "0.1.0",
+  "workspaces": [
+    "arena",
+    "forge",
+    "shared"
+  ],
   "description": "Project Djin",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev:arena": "pnpm --filter @tzar/arena dev",
+    "dev:forge": "pnpm --filter @tzar/forge dev",
+    "dev": "concurrently \"pnpm run dev:arena\" \"pnpm run dev:forge\" "
   },
   "repository": {
     "type": "git",
@@ -19,5 +26,8 @@
   "bugs": {
     "url": "https://github.com/kronendieb/project_djin/issues"
   },
-  "homepage": "https://github.com/kronendieb/project_djin#readme"
+  "homepage": "https://github.com/kronendieb/project_djin#readme",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
 }

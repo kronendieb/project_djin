@@ -11,7 +11,7 @@
         error = null;
 
         try{
-            const res = await fetch("/api/auth/");
+            const res = await fetch("/api/auth/login-url");
 
             if (!res.ok){
                 throw new Error("Failed to communicate to service");
