@@ -713,3 +713,4 @@
 127.0.0.1 - - [06/Oct/2025:17:59:46 -0400] "GET /src/lib/AuthenticationButton.svelte?t=1759787932426 HTTP/1.1" 304 0 "https://127.0.0.1/src/App.svelte?t=1759787932426" "Mozilla/5.0 (X11; Linux x86_64; rv:143.0) Gecko/20100101 Firefox/143.0"
 127.0.0.1 - - [06/Oct/2025:17:59:46 -0400] "GET /src/App.svelte?svelte&type=style&lang.css HTTP/1.1" 304 0 "https://127.0.0.1/src/App.svelte?t=1759787932426" "Mozilla/5.0 (X11; Linux x86_64; rv:143.0) Gecko/20100101 Firefox/143.0"
 127.0.0.1 - - [06/Oct/2025:17:59:46 -0400] "GET /api/auth/check_login HTTP/1.1" 304 0 "https://127.0.0.1/" "Mozilla/5.0 (X11; Linux x86_64; rv:143.0) Gecko/20100101 Firefox/143.0"
+127.0.0.1 - - [06/Oct/2025:19:39:09 -0400] "GET /?token=YLzvxQBA5KTH HTTP/1.1" 101 22 "-" "Mozilla/5.0 (X11; Linux x86_64; rv:143.0) Gecko/20100101 Firefox/143.0"
