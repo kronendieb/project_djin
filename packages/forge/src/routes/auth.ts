@@ -1,6 +1,8 @@
 import express, { Router, Request, Response } from "express";
+import session from "express-session"
 import app_env from "../models/environment";
 import crypto, { generatePrime } from "crypto"
+import axios from "axios";
 
 const authRouter = Router();
 
@@ -12,12 +14,38 @@ const generatePKCE = () => {
 
 // The function that will be called back from schwab
 authRouter.get("/", (req: Request, res:Response) => {
+    /*
     console.log("Redirecting to Index.");
     const params = new URLSearchParams(req.query as Record<string, string>).toString();
 
     console.log(params)
 
     res.redirect("/")
+     * */
+
+    const {code} = req.query;
+    const verifier = req.session.verifier;
+
+    const data = new URLSearchParams({
+        grant_type: "authorization_code",
+        code,
+        client_id: app_env.key + "@AMER.OAUTHAP",
+        redirect_uri: app_env.callback_url,
+        code_verifier: verifier;
+    });
+
+    const tokenRes = await axios.post(app_env.token_url, data);
+    req.session.tokens = tokenRes.data;
+
+    res.redirect("/");
+});
+
+authRouter.get("/refresh-tokens", (req, res) => {
+    const data = new URLSearchParams({
+        grant_type: "refresh_token",
+        refresh_token,
+        client_id: app_env.key + "@AMER.OAUTHAP",
+    });
 });
 
 // The function that checks the state of the refresh and access tokens
@@ -37,6 +65,16 @@ authRouter.get("/login-url", (req: Request, res: Response) => {
     //res.json({url: `${app_env.auth_url}?client_id=${app_env.key}&redirect_uri=${app_env.callback_url}`});
     const {verifier, challenge} = generatePKCE();
     req.session.verifier = verifier;
+
+    const params = new URLSearchParams({
+        client_id: app_env.key + "@AMER.OAUTHAP",
+        redirect_uri: app_env.callback_url,
+        response_type: "code",
+        code_challenge: challenge,
+        code_challenge_methode: "S256",
+    });
+
+    res.redirect(app_env.auth_url + "?" + params);
 });
 
 export default authRouter;
