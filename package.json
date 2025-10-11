@@ -3,9 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "workspaces": [
-    "arena",
-    "forge",
-    "shared"
+    "packages/*"
   ],
   "description": "Project Djin",
   "main": "index.js",
@@ -29,7 +27,8 @@
   "homepage": "https://github.com/kronendieb/project_djin#readme",
   "devDependencies": {
     "@types/express-session": "^1.18.2",
-    "concurrently": "^9.2.1"
+    "concurrently": "^9.2.1",
+    "tsx": "^4.20.6"
   },
   "dependencies": {
     "express-session": "^1.18.2"

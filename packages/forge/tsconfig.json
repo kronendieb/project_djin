@@ -8,9 +8,9 @@
         "esModuleInterop": true,
         "skipLibCheck": true
     },
+    "extends": "../../tsconfig.base.json",
     "compilerOptions": {
-        "typeRoots": ["../shared/types", "../node_modules/@types"],
-        "baseUrl": "./src"
+        "outDir": "dist"
     },
-    "include": ["src", "../shared/types"]
+    "include": ["src", "../shared/src/types/"]
 }

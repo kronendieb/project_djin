@@ -3,6 +3,7 @@ import "express-session";
 declare module "express-session" {
     interface SessionData{
         verifier?: string;
-        tokens?: any;
+        access_token?: any;
+        refresh_token?: any;
     }
 }
