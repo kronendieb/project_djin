@@ -6,11 +6,9 @@
         "rootDir": "src",
         "strict": true,
         "esModuleInterop": true,
-        "skipLibCheck": true
+        "skipLibCheck": true,
+        "types": ["@tzar/shared"]
     },
     "extends": "../../tsconfig.base.json",
-    "compilerOptions": {
-        "outDir": "dist"
-    },
-    "include": ["src", "../shared/src/types/"]
+    "include": ["src"]
 }

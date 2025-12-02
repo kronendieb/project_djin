@@ -3,7 +3,6 @@ import { Router } from "express";
 import cors from "cors";
 import authRouter from "./routes/auth";
 import session from "express-session";
-import "@shared/types/express-session"
 
 const app = express();
 app.use(cors());

@@ -22,6 +22,7 @@ authRouter.get("/", async (req: Request, res:Response) => {
     res.redirect("/")
      * */
 
+
     const code = req.query.code as string;
     const verifier = req.session.verifier as string;
 

@@ -1,8 +1,8 @@
 {
   "files": [],
   "references": [
-    { "path": "packages/shared" },
-    { "path": "packages/arena" },
-    { "path": "packages/forge" }
+    { "path": "./packages/shared" },
+    { "path": "./packages/arena" },
+    { "path": "./packages/forge" }
   ]
 }

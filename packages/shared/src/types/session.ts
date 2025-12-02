@@ -7,3 +7,5 @@ declare module "express-session" {
         refresh_token?: any;
     }
 }
+
+export {};
