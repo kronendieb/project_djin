@@ -2,33 +2,44 @@ import express from "express";
 import { Router } from "express";
 import cors from "cors";
 import authRouter from "./routes/auth";
+//import { fullPathTelemetry } from "./controllers/telemetry";
 import session from "express-session";
+import app_env from "./models/environment";
 
 const app = express();
-app.use(cors());
+app.use(cors({origin: "...", credentials:true}));
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.set('trust proxy', true);
 
-const router = Router();
-router.use("/auth", authRouter)
-
-app.use("/api", router);
-
 app.use(
     session({
-        secret: process.env.SESSION_SECRET || "replace_this_secret",
+        secret: app_env.session_secret!,
         resave: false,
-        saveUninitialized: false,
+        saveUninitialized: true,
         cookie: {
             secure: true,
+            sameSite: "none",
             httpOnly: true,
+            domain: '127.0.0.1',
             maxAge: 1000 * 60 * 60,
         },
     })
 )
 
-const PORT = process.env.PORT || 5000;
+app.use((req, res, next) => {
+    console.log("INCOMING", req.method, req.url, "sessionID:",req.sessionID);
+    next();
+})
+
+const mainRouter = Router();
+mainRouter.use("/auth", authRouter)
+
+app.use("/api", mainRouter);
+//app.use(fullPathTelemetry());
+
+const PORT = app_env.port || 5000;
 app.listen(PORT, () => {
     console.log(`Backend running on http://localhost:${PORT}`);
+    console.log("If nginx is enabled use https://127.0.0.1")
 })

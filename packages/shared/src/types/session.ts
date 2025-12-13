@@ -5,6 +5,7 @@ declare module "express-session" {
         verifier?: string;
         access_token?: any;
         refresh_token?: any;
+        tokens?: any;
     }
 }
 

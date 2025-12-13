@@ -1,58 +1,47 @@
 import express, { Router, Request, Response } from "express";
 import app_env from "../models/environment";
-import crypto, { generatePrime } from "crypto"
-import axios from "axios";
+import { exchangeAuthCode, generatePKCE } from "./schwabPKCE";
 
 const authRouter = Router();
 
-const generatePKCE = () => {
-    const verifier = crypto.randomBytes(64).toString("base64url");
-    const challenge = crypto.createHash("sha256").update(verifier).digest("base64url");
-    return {verifier, challenge};
-};
-
 // The function that will be called back from schwab
 authRouter.get("/", async (req: Request, res:Response) => {
-    /*
-    console.log("Redirecting to Index.");
-    const params = new URLSearchParams(req.query as Record<string, string>).toString();
+    try {
+        const code = req.query.code as string;
+        const verifier = req.session.verifier;
 
-    console.log(params)
+        console.log("Code: ", code)
+        console.log("Verifier: ", verifier)
+        console.log("SessionID: ", req.sessionID)
+        console.log("Session: ", req.session)
 
-    res.redirect("/")
-     * */
+        if (!code || !verifier){
+            return res.status(400).send("Missing code or verifier");
+        }
 
+        const tokens = await exchangeAuthCode(code, verifier);
+        req.session.tokens = tokens;
 
-    const code = req.query.code as string;
-    const verifier = req.session.verifier as string;
-
-    const data = new URLSearchParams({
-        grant_type: "authorization_code",
-        code,
-        client_id: app_env.key + "@AMER.OAUTHAP",
-        redirect_uri: app_env.callback_url,
-        code_verifier: verifier,
-    });
-
-    const tokenRes = await axios.post(app_env.token_url, data);
-    console.log(tokenRes.data);
-    req.session.refresh_token = tokenRes.data.refresh_token;
-
-    res.redirect("/");
+        res.send("Successfull authentication, tokens stored in session");
+    }catch (err: any){
+        console.error(err.response?.data || err);
+        res.status(500).send("Error during authentication");
+    }
 });
 
+// This function refreshes the auth tokens, used when a schwab call is done.
 authRouter.get("/refresh-tokens", (req, res) => {
     const refresh_token = req.session.refresh_token;
 
     const data = new URLSearchParams({
         grant_type: "refresh_token",
         refresh_token,
-        client_id: app_env.key + "@AMER.OAUTHAP",
+        client_id: app_env.key,
     });
 });
 
 // The function that checks the state of the refresh and access tokens
-authRouter.get("/check_login", (req, res) =>{
+authRouter.get("/check-login", (req, res) =>{
     res.json({status: "not logged in."});
 });
 
@@ -64,13 +53,17 @@ authRouter.get("/test", (req, res) => {
 
 // The function that sends the client the redirect to the login website.
 authRouter.get("/login-url", (req: Request, res: Response) => {
-    console.log("Login Redirect.")
     //res.json({url: `${app_env.auth_url}?client_id=${app_env.key}&redirect_uri=${app_env.callback_url}`});
     const {verifier, challenge} = generatePKCE();
     req.session.verifier = verifier;
 
+    console.log("Verifier: ", verifier)
+    console.log("SessionID: ", req.sessionID)
+    console.log("Session: ", req.session)
+    console.log("Session Stored Verifier: ", req.session.verifier)
+
     const params = new URLSearchParams({
-        client_id: app_env.key + "@AMER.OAUTHAP",
+        client_id: app_env.key,
         redirect_uri: app_env.callback_url,
         response_type: "code",
         code_challenge: challenge,

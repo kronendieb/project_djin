@@ -31,9 +31,9 @@
 
     const check_login_information = async () =>{
         try{
-            const check = await fetch("/api/auth/check_login");
+            const check = await fetch("/api/auth/check-login");
             if(!check.ok){
-                throw new Error("Could not check login information");
+                throw new Error("Filed to reach the login server.");
             }
             login_check = await check.json();
         } catch (err: any){
