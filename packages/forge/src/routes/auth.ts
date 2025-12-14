@@ -22,7 +22,8 @@ authRouter.get("/", async (req: Request, res:Response) => {
         const tokens = await exchangeAuthCode(code, verifier);
         req.session.tokens = tokens;
 
-        res.send("Successfull authentication, tokens stored in session");
+        res.redirect("/")
+        //res.send("Successfull authentication, tokens stored in session");
     }catch (err: any){
         console.error(err.response?.data || err);
         res.status(500).send("Error during authentication");
@@ -42,7 +43,15 @@ authRouter.get("/refresh-tokens", (req, res) => {
 
 // The function that checks the state of the refresh and access tokens
 authRouter.get("/check-login", (req, res) =>{
-    res.json({status: "not logged in."});
+    const refresh_tokens = req.session.tokens;
+    console.log("Tokens: ", refresh_tokens)
+    if(!refresh_tokens){
+        res.json({status: "not logged in."});
+    }
+
+    else{
+        res.json(refresh_tokens);
+    }
 });
 
 // Test function for the endpoint

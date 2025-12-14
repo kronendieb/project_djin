@@ -15,8 +15,6 @@ export const exchangeAuthCode = async (code: string, verifier: string) => {
         grant_type: "authorization_code",
         code,
         redirect_uri: app_env.callback_url,
-        client_id: app_env.key,
-        client_secret: app_env.secret,
         code_verifier: verifier,
     });
 
@@ -40,11 +38,17 @@ export const refreshTokens = async (refreshToken: string) => {
     const params = new URLSearchParams({
         grant_type: "refresh_token",
         refresh_token: refreshToken,
-        client_id: app_env.key,
     });
 
+    const basicAuth = Buffer.from(
+        `${app_env.key}:${app_env.secret}`
+    ).toString("base64");
+
     const response = await axios.post(tokenURL, params.toString(), {
-        headers: {"Content-Type": "application/x-www-form-urlencoded"},
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": `Basic ${basicAuth}`,
+        },
     });
 
     return response.data;

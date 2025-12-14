@@ -56,5 +56,5 @@
 {/if}
 
 {#if login_check} 
-    <p>We are {login_check.status}</p>
+    <p>{JSON.stringify(login_check, null, 2)}</p>
 {/if}
