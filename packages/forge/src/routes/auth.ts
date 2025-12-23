@@ -1,6 +1,7 @@
 import express, { Router, Request, Response } from "express";
 import app_env from "../models/environment";
-import { exchangeAuthCode, generatePKCE } from "./schwabPKCE";
+import { exchangeAuthCode, generatePKCE, refreshTokensIfNeeded } from "../models/schwabPKCE";
+import { loadTokens, normalizeSchwabTokens, saveTokens, TokenAuthRequiredError } from "../models/tokenStore";
 
 const authRouter = Router();
 
@@ -12,14 +13,14 @@ authRouter.get("/", async (req: Request, res:Response) => {
 
         console.log("Code: ", code)
         console.log("Verifier: ", verifier)
-        console.log("SessionID: ", req.sessionID)
-        console.log("Session: ", req.session)
 
         if (!code || !verifier){
             return res.status(400).send("Missing code or verifier");
         }
 
-        const tokens = await exchangeAuthCode(code, verifier);
+        const schwabTokens  = await exchangeAuthCode(code, verifier);
+        const tokens = normalizeSchwabTokens(schwabTokens);
+        saveTokens(tokens)
         req.session.tokens = tokens;
 
         res.redirect("/")
@@ -31,26 +32,42 @@ authRouter.get("/", async (req: Request, res:Response) => {
 });
 
 // This function refreshes the auth tokens, used when a schwab call is done.
-authRouter.get("/refresh-tokens", (req, res) => {
-    const refresh_token = req.session.refresh_token;
+authRouter.get("/refresh-tokens", async (req, res) => {
+    try{
+        await refreshTokensIfNeeded()
+        const tokens = await loadTokens();
+        req.session.tokens = tokens;
+        res.json({
+            authenticated: true,
+            expires_at: tokens.expires_at,
+        })
+    }catch (err:any){
+        if (err instanceof TokenAuthRequiredError){
+            return res.status(401).json({authenticated:false});
+        }
+        console.error(err);
+        res.status(500).json({error:"Internal server error"});
+    }
 
-    const data = new URLSearchParams({
-        grant_type: "refresh_token",
-        refresh_token,
-        client_id: app_env.key,
-    });
 });
 
 // The function that checks the state of the refresh and access tokens
-authRouter.get("/check-login", (req, res) =>{
-    const refresh_tokens = req.session.tokens;
-    console.log("Tokens: ", refresh_tokens)
-    if(!refresh_tokens){
-        res.json({status: "not logged in."});
-    }
+authRouter.get("/check-login", async (req, res) =>{
+    try {
+        await refreshTokensIfNeeded();
+        const tokens = await loadTokens();
+        req.session.tokens = tokens;
 
-    else{
-        res.json(refresh_tokens);
+        res.json({
+            authenticated: true,
+            expires_at: tokens.expires_at,
+        });
+    } catch (err: any){
+        if(err instanceof TokenAuthRequiredError){
+            return res.status(401).json({authenticated:false});
+        }
+        console.error(err);
+        res.status(500).json({error: "Internal server error"});
     }
 });
 
@@ -62,13 +79,10 @@ authRouter.get("/test", (req, res) => {
 
 // The function that sends the client the redirect to the login website.
 authRouter.get("/login-url", (req: Request, res: Response) => {
-    //res.json({url: `${app_env.auth_url}?client_id=${app_env.key}&redirect_uri=${app_env.callback_url}`});
     const {verifier, challenge} = generatePKCE();
     req.session.verifier = verifier;
 
     console.log("Verifier: ", verifier)
-    console.log("SessionID: ", req.sessionID)
-    console.log("Session: ", req.session)
     console.log("Session Stored Verifier: ", req.session.verifier)
 
     const params = new URLSearchParams({

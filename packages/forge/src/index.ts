@@ -2,9 +2,10 @@ import express from "express";
 import { Router } from "express";
 import cors from "cors";
 import authRouter from "./routes/auth";
-//import { fullPathTelemetry } from "./controllers/telemetry";
 import session from "express-session";
 import app_env from "./models/environment";
+import { endpointLog } from "./controllers/logging";
+import { marketDataRouter } from "./routes/marketData";
 
 const app = express();
 app.use(cors({origin: "...", credentials:true}));
@@ -27,16 +28,13 @@ app.use(
     })
 )
 
-app.use((req, res, next) => {
-    console.log("INCOMING", req.method, req.url, "sessionID:",req.sessionID);
-    next();
-})
+app.use(endpointLog)
 
 const mainRouter = Router();
 mainRouter.use("/auth", authRouter)
+mainRouter.use("/marketdata", marketDataRouter)
 
 app.use("/api", mainRouter);
-//app.use(fullPathTelemetry());
 
 const PORT = app_env.port || 5000;
 app.listen(PORT, () => {

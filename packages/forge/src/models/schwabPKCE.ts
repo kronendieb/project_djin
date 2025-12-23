@@ -1,6 +1,7 @@
 import crypto from "crypto";
 import axios from "axios";
 import app_env from "../models/environment";
+import { isExpired, loadTokens, normalizeSchwabTokens, saveTokens, StoredTokens } from "./tokenStore";
 
 export const generatePKCE = () => {
     const verifier = crypto.randomBytes(64).toString("base64url");
@@ -52,4 +53,17 @@ export const refreshTokens = async (refreshToken: string) => {
     });
 
     return response.data;
+}
+
+export const refreshTokensIfNeeded = async (): Promise<StoredTokens> => {
+    const tokens = await loadTokens();
+    
+    if(!isExpired(tokens.expires_at)){
+        return tokens;
+    }
+
+    const refreshed = await refreshTokens(tokens.refresh_token);
+    await saveTokens(normalizeSchwabTokens(refreshed));
+
+    return refreshed;
 }

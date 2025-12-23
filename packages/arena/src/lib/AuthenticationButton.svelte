@@ -32,9 +32,6 @@
     const check_login_information = async () =>{
         try{
             const check = await fetch("/api/auth/check-login");
-            if(!check.ok){
-                throw new Error("Filed to reach the login server.");
-            }
             login_check = await check.json();
         } catch (err: any){
             error = err.message;
@@ -56,5 +53,10 @@
 {/if}
 
 {#if login_check} 
-    <p>{JSON.stringify(login_check, null, 2)}</p>
+    {#if login_check.authenticated === true}
+        <p>Correctly authenticated.</p>
+    {/if}
+    {#if login_check.authenticated === false}
+        <p>Not authenticated, please login.</p>
+    {/if}
 {/if}

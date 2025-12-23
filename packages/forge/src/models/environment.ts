@@ -10,6 +10,7 @@ const app_env = {
     token_file: `${process.env.APP_TOKEN_NAME}`,
     auth_url: `${process.env.APP_AUTH_URL}`,
     token_url: `${process.env.APP_TOKEN_URL}`,
+    marketdata_url: `${process.env.APP_MARKETDATA_URL}`,
     session_secret: `${process.env.APP_SESSION_SECRET}`,
 }
 
