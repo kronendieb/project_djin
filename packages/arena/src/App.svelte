@@ -1,20 +1,19 @@
 <script lang="ts">
-  import Counter from './lib/Counter.svelte'
-  import AuthButton from "./lib/AuthenticationButton.svelte"
-  import Chart from "./lib/CloseMarketChart.svelte"
+import AuthButton from "./lib/AuthenticationButton.svelte"
+import Chart from "./lib/ChartWrapper.svelte"
 </script>
 
-<main>
-  <div>
-    <Chart backgroundColor="#141D24"/>
-  </div>
+<main> 
 
-  <div class="card">
+<div >
+    <Chart />
+</div>
+
+<div class="card">
     <AuthButton />
-  </div> 
+</div> 
 
-</main>
+</main> 
 
 <style>
-    
 </style>
