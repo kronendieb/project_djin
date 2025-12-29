@@ -26,20 +26,17 @@ onMount(async () => {
 
 </script>
 
-<div class="chart"
-    style={`width:${width}px; height:${height}px`}>
+<div class="chart" >
     <!-- Current visible Charts overlayed -->
+    <div
+        style={`width:${width}px; height:${height}px`}>
+
+    </div>
     <CandleMarket data={data} height={height} width={width}></CandleMarket>
-    <MarketAxisChart height={height} width={width} lineColor={"#ffffff"}/>
+    <MarketAxisChart data={data} height={height} width={width} lineColor={"#ffffff"}/>
 
     <!-- Hidden Charts 
     -->
-</div>
-
-<div class="chart"
-    style={`width:${width}px; height:${height}px`}>
-    <MarketAxisChart width={width} height={height}/>
-    <CloseMarketChart data={data} height={height} width={width}/>
 </div>
 
 <style>
@@ -48,7 +45,7 @@ onMount(async () => {
     position: relative;
     background-color: #141D25;
     border-radius: 8px;
-    padding: 4px;
+    padding: 10px;
 }
 
 :global(.chart > svg) {

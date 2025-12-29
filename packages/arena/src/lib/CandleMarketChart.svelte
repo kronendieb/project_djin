@@ -3,23 +3,22 @@
     export let data: Candle[] = [];
     export let width = 600;
     export let height = 300;
-    export let padding = 20;
 
-    $: min = Math.min(...data.map(d => d.close))
-    $: max = Math.max(...data.map(d => d.close))
+    $: min = Math.min(...data.map(d => d.low))
+    $: max = Math.max(...data.map(d => d.high))
     $: range = max - min || 1;
 
     const y = (price: number) =>
-        padding + (height - padding * 2) * (1 - (price - min) / range)
+        height * (1 - (price - min) / range)
 
     $: candleThickness = data.length > 0 ?
-        (width - padding * 2 ) / data.length : 0;
+        width / data.length : 0;
 
 </script>
 
 <svg {width} {height} viewBox={`0 0 ${width} ${height}`}>
     {#each data as c, i}
-        {@const x = padding + i * candleThickness + candleThickness / 2}
+        {@const x = i * candleThickness + candleThickness / 2}
         {@const bullish = c.close >= c.open}
 
         <line

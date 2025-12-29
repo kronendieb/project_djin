@@ -10,12 +10,12 @@
     $: max = Math.max(...data.map(d => d.close));
 
     const x = (i:number) =>
-        padding + (i / (data.length - 1)) * (width - padding * 2)
+        padding + (i / (data.length - 1)) * (width)
 
     const y = (price:number) =>{
         //let normal = (price - min) / (max - min)
         //return height - normal;
-        return height - padding - ((price - min) / (max - min)) * (height - padding * 2);
+        return height - ((price - min) / (max - min)) * (height);
     }
 
     $: path = data

@@ -12,9 +12,9 @@ export const getPriceHistory = async (token: StoredTokens, symbol: string) => {
             },
             params: {
                 symbol,
-                periodType: "day",
+                periodType: "year",
                 period: 1,
-                frequencyType: "minute",
+                frequencyType: "daily",
                 frequency: 1,
                 needExtendedHoursData: false,
             },

@@ -5,13 +5,9 @@ import Chart from "./lib/ChartWrapper.svelte"
 
 <main> 
 
-<div >
-    <Chart />
-</div>
+<Chart />
 
-<div class="card">
-    <AuthButton />
-</div> 
+<AuthButton />
 
 </main> 
 
