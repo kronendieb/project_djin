@@ -3,11 +3,13 @@ import AuthButton from "./lib/AuthenticationButton.svelte"
 import Chart from "./lib/ChartWrapper.svelte"
 </script>
 
-<main> 
+<main style="width:100vw; height:100vh;"> 
 
-<Chart />
+    <div>
+        <Chart />
+    </div>  
 
-<AuthButton />
+    <AuthButton />
 
 </main> 
 

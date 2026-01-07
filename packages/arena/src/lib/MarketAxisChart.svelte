@@ -10,7 +10,7 @@ let textOffset = 20;
 $: max = Math.max(...data.map(d => d.high))
 $: min = Math.max(...data.map(d => d.low))
 
-const xScale = (time:number) => {
+const xScale = (time:number, data: Candle[]) => {
     const t0 = data[0].time;
     const t1 = data[data.length - 1].time;
     return ((time - t0) / (t1 - t0)) * width;
@@ -29,7 +29,7 @@ const getXTicks = (data: Candle[]) => {
         let d = new Date(data[idx].time).toLocaleDateString()
 
         return {
-            x: xScale(data[idx].time),
+            x: xScale(data[idx].time, data),
             label: new Date(data[idx].time).toDateString()
         }
     })

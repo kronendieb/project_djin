@@ -3,18 +3,15 @@
     export let data: Candle[] = [];
     export let width = 600;
     export let height = 300;
-    export let padding = 20;
     export let lineColor = "white";
 
-    $: min = Math.min(...data.map(d => d.close));
-    $: max = Math.max(...data.map(d => d.close));
+    $: min = Math.min(...data.map(d => d.low));
+    $: max = Math.max(...data.map(d => d.high));
 
     const x = (i:number) =>
-        padding + (i / (data.length - 1)) * (width)
+        (i / (data.length - 1)) * (width)
 
     const y = (price:number) =>{
-        //let normal = (price - min) / (max - min)
-        //return height - normal;
         return height - ((price - min) / (max - min)) * (height);
     }
 
@@ -28,6 +25,6 @@
     d={path}
     fill = "none"
     stroke = {lineColor}
-    stroke-width = "2"
+    stroke-width = "1"
     />
 </svg>
