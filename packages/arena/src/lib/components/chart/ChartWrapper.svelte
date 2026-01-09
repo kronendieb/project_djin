@@ -4,6 +4,7 @@ import MarketAxisChart from "./MarketAxisChart.svelte";
 import CandleMarket from "./CandleMarketChart.svelte";
 import CloseMarketChart from "./CloseMarketChart.svelte";
 import SimpleMovingAverageChart from "./SimpleMovingAverageChart.svelte";
+import MouseControlOverlay from "./MouseControlOverlay.svelte";
 
 let data: Candle[] = [];
 let symbol: string = "AAPL";
@@ -29,21 +30,23 @@ onMount(async () => {
 
 <div class="wrapper">
     <!-- Current visible Charts overlayed -->
-    <div class="chart">
+    <div class="chart" style={`width: ${width}px; height: ${height}px`}>
         <CandleMarket data={data} height={height} width={width}></CandleMarket>
-        <MarketAxisChart data={data} height={height} width={width} lineColor={"#ffffff"}/>
         <SimpleMovingAverageChart data={data} height={height} width={width} period={10}/>
         <SimpleMovingAverageChart data={data} height={height} width={width} period={20} lineColor={"cyan"}/>
+        <MarketAxisChart data={data} height={height} width={width}/>
+        <MouseControlOverlay data={data} height={height} width={width}/>
     </div>
 
-    <div class="chart">
+    <div class="chart" style={`width: ${width}px; height: ${height}px`}>
         <CandleMarket data={data} height={height} width={width}></CandleMarket>
         <CloseMarketChart data={data} height={height} width={width}/>
         <MarketAxisChart data={data} height={height} width={width} lineColor={"#ffffff"}/>
+        <MouseControlOverlay data={data} height={height} width={width}/>
     </div>
 
-
     <!-- Hidden Charts 
+
     -->
 </div>
 

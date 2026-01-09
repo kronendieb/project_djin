@@ -26,11 +26,9 @@ const getXTicks = (data: Candle[]) => {
     return Array.from({length: ticks}, (_, i) => {
         const idx = Math.floor((i / (ticks - 1)) * (data.length - 1));
 
-        let d = new Date(data[idx].time).toLocaleDateString()
-
         return {
             x: xScale(data[idx].time, data),
-            label: new Date(data[idx].time).toDateString()
+            label: new Date(data[idx].time).toLocaleDateString()
         }
     })
 }
