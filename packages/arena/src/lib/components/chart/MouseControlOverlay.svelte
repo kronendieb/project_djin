@@ -1,53 +1,31 @@
 <script lang="ts">
-    import { candleWidth } from "../../scripts/chart/scales";
-
-
+import { candleWidth } from "../../scripts/chart/scales";
 import { viewport } from "../../scripts/stores/chartViewport";
+import { chartStore } from "../../scripts/stores/chartStore";
 
 export let width: number;
 export let height: number;
 export let data:Candle[] = [];
 export let lineColor:string = "white";
-export let chartID: string;
+export let chartId: string;
 
-let mouseX = 0;
 let showCrosshair = false;
 let hovered: boolean = false;
 
 $: candles = data.slice($viewport.start, $viewport.start + $viewport.count);
 $: thickness = candleWidth(width, $viewport.count);
 $: candleIndex = Math.floor(
-    $viewport.start + (mouseX / width) * $viewport.count
+    $viewport.start + ($chartStore[chartId]?.hud.x / width) * $viewport.count
 )
-$: snappedX = Math.floor((mouseX / width) * $viewport.count) * thickness + thickness / 2;
+$: snappedX = 
+    Math.floor(($chartStore[chartId]?.hud.x / width) * $viewport.count) * thickness + thickness / 2;
 $: time = new Date(candles[candleIndex]?.time).toLocaleDateString();
-
-const onMouseEnter = () => {
-    hovered = true;
-}
-
-const onMouseMove = (e: MouseEvent) => {
-    if(!hovered) return;
-
-    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-    mouseX = e.clientX - rect.left
-    showCrosshair = true;
-}
-
-const onMouseLeave = () => {
-    hovered = false;
-    showCrosshair = false;
-}
 
 </script>
 
-<svg {width} {height} viewBox={`0 0 ${width} ${height}`}
-    on:mouseenter={onMouseEnter}
-    on:mousemove={onMouseMove}
-    on:mouseleave={onMouseLeave}
-    role="figure"
->
-    {#if showCrosshair}
+<!-- svelte-ignore a11y-no-static-element-interactions -->
+<g>
+    {#if $chartStore[chartId]?.hud.hovered}
         <line
             x1={snappedX}
             x2={snappedX}
@@ -63,8 +41,9 @@ const onMouseLeave = () => {
             fill={lineColor}
         >{time}</text>
     {/if}
-</svg>
+</g>
 
 <style>
 
 </style>
+

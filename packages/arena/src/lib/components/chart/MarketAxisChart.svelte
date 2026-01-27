@@ -61,8 +61,9 @@ $: yTicks = getYTicks(data);
 
 </script>
 
-<svg {width} {height} viewBox={`0 0 ${width} ${height}`}>
     
+<g>
+
     {#each xTicks as t}
         <line
             x1={t.x}
@@ -116,4 +117,4 @@ $: yTicks = getYTicks(data);
         stroke={lineColor}
     ></line>
 
-</svg>
+</g>

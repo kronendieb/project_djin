@@ -65,7 +65,6 @@ onMount(async () => {
 
 <style>
 .login-button {
-    position: fixed;
     display: flex;
     flex-direction: row;
     top: 10px;

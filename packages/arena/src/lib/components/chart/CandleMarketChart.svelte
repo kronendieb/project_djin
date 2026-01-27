@@ -33,7 +33,7 @@
     
 </script>
 
-<svg {width} {height} viewBox={`0 0 ${width} ${height}`} on:wheel={onWheel}>
+<g>
     {#each data as c, i}
         {@const x = i * candleThickness + candleThickness / 2}
         {@const bullish = c.close >= c.open}
@@ -54,4 +54,4 @@
             fill={bullish ? "green" : "red"}
         ></rect>
     {/each}
-</svg>
+</g>

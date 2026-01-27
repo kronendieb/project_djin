@@ -1,17 +1,24 @@
 <script lang="ts">
 import AuthButton from "./lib/components/ui/AuthenticationButton.svelte"
-import Chart from "./lib/components/chart/ChartWrapper.svelte"
+import ChartWrapper from "./lib/components/chart/ChartWrapper.svelte"
+import SideMenu from "./lib/components/ui/SideMenu.svelte";
+import ThemeToggle from "./lib/components/ui/ThemeToggle.svelte";
 </script>
 
-<main style="width:100vw; height:100vh;"> 
+<main> 
 
-    <div>
-        <Chart />
-    </div>  
+    <SideMenu>
+        <AuthButton />
+        <ThemeToggle/>
+    </SideMenu>
 
-    <AuthButton />
+    <ChartWrapper />
 
 </main> 
 
 <style>
+main {
+    width: 100vw;
+    height: 100vh;
+}
 </style>
