@@ -18,6 +18,7 @@ marketDataRouter.get("/price-history/:symbol", async (req, res) => {
 
         const response = await getPriceHistory(tokens, symbol);
         const candles = normalizePriceHistory(response.candles);
+
         res.json(candles);
     } catch (err: any){
         if(err.response?.status === 401){

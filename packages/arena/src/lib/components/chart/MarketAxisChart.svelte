@@ -1,67 +1,81 @@
 <script lang="ts">
-export let data: Candle[] = [];
-export let width = 600;
-export let height = 300;
-export let lineColor = "white";
-export let dashColor = "#ffffff80";
+import { chartStore } from "../../scripts/stores/chartStore";
+
+let {
+    data = [],
+    chartId,
+    width = 600,
+    height = 300,
+    lineColor = "white",
+    dashColor = "#ffffff80",
+    xticks = 6,
+    yticks = 5,
+}:{
+    data?: Candle[],
+    chartId: string,
+    width: number,
+    height: number,
+    lineColor?: string,
+    dashColor?: string,
+    xticks?: number,
+    yticks?: number,
+} = $props();
 
 let textOffset = 20;
 
-$: max = Math.max(...data.map(d => d.high))
-$: min = Math.max(...data.map(d => d.low))
+const viewport = $derived($chartStore[chartId].viewport);
+const candles = $derived(data.slice(viewport.start, viewport.start + viewport.count));
 
-const xScale = (time:number, data: Candle[]) => {
+const max = $derived(Math.max(...candles.map(d => d.high)));
+const min = $derived(Math.max(...candles.map(d => d.low)));
+
+const xScale = (data: Candle[], time:number,  width:number) => {
     const t0 = data[0].time;
     const t1 = data[data.length - 1].time;
     return ((time - t0) / (t1 - t0)) * width;
 }
 
-const getXTicks = (data: Candle[]) => {
+const getXTicks = (data: Candle[], width:number, ticks:number) => {
     if(!data || data.length === 0){
         return [];
     }
-
-    const ticks = 6;
 
     return Array.from({length: ticks}, (_, i) => {
         const idx = Math.floor((i / (ticks - 1)) * (data.length - 1));
 
         return {
-            x: xScale(data[idx].time, data),
+            x: xScale(data, data[idx].time, width),
             label: new Date(data[idx].time).toLocaleDateString()
         }
     })
 }
 
-$: xTicks = getXTicks(data);
-
-const yScale = (price:number) => {
+const yScale = (price:number, height:number, min:number, max:number) => {
     return height - ((price - min)/(max-min)) * height;
 }
 
-const getYTicks = (data: Candle[]) => {
+const getYTicks = (data: Candle[], height:number, min:number, max:number, ticks:number) => {
     if (!data || data.length === 0){
         return []
     }
-
-    const ticks = 5;
 
     return Array.from({length: ticks}, (_, i) => {
         const value = min + (i / (ticks - 1)) * (max - min)
 
         return {
-            y: yScale(value),
+            y: yScale(value, height, min, max),
             label: value.toFixed(2)
         }
     })
 
 }
 
-$: yTicks = getYTicks(data);
+const xTicks = $derived(getXTicks(candles, width, xticks));
+const yTicks = $derived(getYTicks(candles, height, min, max, yticks));
 
 </script>
 
-    
+
 <g>
 
     {#each xTicks as t}

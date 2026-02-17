@@ -1,7 +1,6 @@
 <script lang="ts">
 import {onMount} from "svelte";
 
-let data: any = null;
 let loading = false;
 let error: any = null;
 let login_check: boolean = false;
@@ -17,7 +16,7 @@ const authenticate = async () => {
             throw new Error("Failed to communicate to service");
         }
 
-        data = await res.json();
+        let data = await res.json();
         if(data.url){
             window.location.href = data.url
         }
@@ -31,8 +30,11 @@ const authenticate = async () => {
 
 const check_login_information = async () =>{
     try{
-        const check = await fetch("/api/auth/check-login");
-        let check_obj = await check.json();
+        const res = await fetch("/api/auth/check-login");
+        if (!res.ok ){
+            throw new Error("Service not authenticated")
+        }
+        let check_obj = await res.json();
         login_check = check_obj.authenticated;
     } catch (err: any){
         error = err.message;
@@ -50,11 +52,6 @@ onMount(async () => {
     <button onclick = {authenticate} disabled={loading}>
         {loading ? "Loading..." : "Login"}
     </button>
-
-    {#if error}
-        <p>Error: {error}</p>
-    {/if}
-
     {#if login_check === true}
         <p>👍</p>
     {/if}

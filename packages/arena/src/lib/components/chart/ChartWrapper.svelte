@@ -1,37 +1,37 @@
 <script lang="ts">
 import {onMount} from "svelte";
-import MarketAxisChart from "./MarketAxisChart.svelte";
-import CandleMarket from "./CandleMarketChart.svelte";
-import CloseMarketChart from "./CloseMarketChart.svelte";
-import SimpleMovingAverageChart from "./SimpleMovingAverageChart.svelte";
-import MouseControlOverlay from "./MouseControlOverlay.svelte";
 import ChartHandler from "./ChartHandler.svelte";
 
-let data: Candle[] = [];
+let data: Candle[] = $state([]);
 let symbol: string = "AAPL";
 
-let width = 1500;
-let height = 800;
-
 let container: HTMLElement;
-let chartCount = 0;
+let chartCount = 4;
 
-let error:any = null;
+let error:string = $state("");
 const getMarketData = async () => {
     try{
-        const fetchData = await fetch(`/api/marketdata/price-history/${symbol}`)
-        data = await fetchData.json();
+        const res = await fetch(`/api/marketdata/price-history/${symbol}`);
+        const body = await res.json();
+
+        if(!res.ok){
+            throw new Error(body?.error ?? "Unknown Server Error");
+        }
+
+        data = body;
     } catch (err: any){
-        error = err.mesage;
+        error = err.message;
     }
 };
 
+$inspect(error)
+$inspect(data)
+
 onMount(async () => {
     getMarketData();
-    chartCount = container.children.length;
 })
 
-$: chartColumns = Math.ceil(Math.sqrt(chartCount));
+const chartColumns = $derived(Math.ceil(Math.sqrt(chartCount)));
 
 </script>
 
@@ -39,32 +39,12 @@ $: chartColumns = Math.ceil(Math.sqrt(chartCount));
     style="grid-template-columns: repeat({chartColumns}, 1fr);"
 >
     <!-- Current visible Charts overlayed -->
-    <ChartHandler data={data} chartId={"1"}>
-    </ChartHandler>
-
-    <ChartHandler data={data} chartId={"1"}>
-    </ChartHandler>
-
-    <ChartHandler data={data} chartId={"1"}>
-    </ChartHandler>
+    {#each Array(chartCount) as _, i}
+        <ChartHandler data={data} chartId={"1"}>
+        </ChartHandler>
+    {/each}
 
     <!-- Hidden Charts 
-    <ChartHandler data={data} width={width} height={height} chartId={"1"}>
-            <CandleMarket data={data} height={height} width={width}></CandleMarket>
-            <MarketAxisChart data={data} height={height} width={width}/>
-    </ChartHandler>
-
-        <SimpleMovingAverageChart data={data} height={height} width={width} period={10}/>
-        <SimpleMovingAverageChart data={data} height={height} width={width} period={20} lineColor={"cyan"}/>
-
-    <div class="chart" style={`width: ${width}px; height: ${height}px`}>
-        <CandleMarket data={data} height={height} width={width}></CandleMarket>
-        <CloseMarketChart data={data} height={height} width={width}/>
-        <MarketAxisChart data={data} height={height} width={width} lineColor={"#ffffff"}/>
-        <MouseControlOverlay data={data} height={height} width={width}/>
-    </div>
-
-
     -->
 </div>
 
@@ -77,6 +57,7 @@ $: chartColumns = Math.ceil(Math.sqrt(chartCount));
     gap: 5px;
     width: 100%;
     height: 100%;
+    padding: 5px;
 }
 
 </style>

@@ -9,3 +9,4 @@ export interface ResStatus {
 export interface User {
     user: string;
 }
+//# sourceMappingURL=index.d.ts.map

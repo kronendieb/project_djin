@@ -1,36 +1,30 @@
 <script lang="ts">
     import { yScale, zoomAt, candleWidth } from "../../scripts/chart/scales";
-    import { viewport } from "../../scripts/stores/chartViewport";
+    import { chartStore } from "../../scripts/stores/chartStore";
 
-    export let data: Candle[] = [];
-    export let width = 600;
-    export let height = 300;
 
-    $: candles = data.slice($viewport.start, $viewport.start + $viewport.count);
-    $: candleThickness = candleWidth(width, $viewport.count);
-    $: min = Math.min(...candles.map(d => d.low))
-    $: max = Math.max(...candles.map(d => d.high))
+    let {
+        data = [],
+        width = 600,
+        height = 300,
+        chartId,
+    }:{
+        data: Candle[],
+        width: number,
+        height: number,
+        chartId: string,
+    } = $props();
+
+    const viewport = $derived($chartStore[chartId].viewport)
+    const candles = $derived(data.slice(viewport.start, viewport.start + viewport.count));
+    const candleThickness = $derived(candleWidth(width, viewport.count));
+    const min = $derived(Math.min(...candles.map(d => d.low)));
+    const max = $derived(Math.max(...candles.map(d => d.high)));
 
     const y = (p: number) => {
         return yScale(p, min, max, height);
     }
 
-    function onWheel(e: WheelEvent){
-        e.preventDefault();
-
-        viewport.update(v => 
-            zoomAt(
-                v,
-                e.offsetX,
-                width,
-                e.deltaY < 0 ? 0.9 : 1.1,
-                10,
-                data.length
-            )
-        );
-    }
-
-    
 </script>
 
 <g>

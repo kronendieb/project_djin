@@ -1,29 +1,30 @@
 <script lang="ts">
 import { candleWidth } from "../../scripts/chart/scales";
-import { viewport } from "../../scripts/stores/chartViewport";
 import { chartStore } from "../../scripts/stores/chartStore";
 
-export let width: number;
-export let height: number;
-export let data:Candle[] = [];
-export let lineColor:string = "white";
-export let chartId: string;
+let {width, height, data, lineColor="white", chartId}:
+{
+    width: number,
+    height: number,
+    data: Candle[],
+    lineColor?: string,
+    chartId: string
+} = $props();
 
-let showCrosshair = false;
-let hovered: boolean = false;
-
-$: candles = data.slice($viewport.start, $viewport.start + $viewport.count);
-$: thickness = candleWidth(width, $viewport.count);
-$: candleIndex = Math.floor(
-    $viewport.start + ($chartStore[chartId]?.hud.x / width) * $viewport.count
-)
-$: snappedX = 
-    Math.floor(($chartStore[chartId]?.hud.x / width) * $viewport.count) * thickness + thickness / 2;
-$: time = new Date(candles[candleIndex]?.time).toLocaleDateString();
+const viewport = $derived($chartStore[chartId].viewport);
+const candles = $derived(data.slice(viewport.start, viewport.start + viewport.count));
+const thickness = $derived( candleWidth(width, viewport.count));
+const candleIndex = $derived(Math.floor(
+    viewport.start + ($chartStore[chartId]?.hud.x / width) * viewport.count
+));
+const snappedX = $derived(
+    Math.floor(($chartStore[chartId]?.hud.x / width) * viewport.count) * thickness + thickness / 2
+);
+const time = $derived(new Date(candles[candleIndex]?.time).toLocaleDateString());
 
 </script>
 
-<!-- svelte-ignore a11y-no-static-element-interactions -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
 <g>
     {#if $chartStore[chartId]?.hud.hovered}
         <line

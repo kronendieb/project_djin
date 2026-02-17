@@ -2,6 +2,7 @@
 import { PathByValues } from "../../scripts/chart/Paths";
 import { candleWidth, xScale, yScale } from "../../scripts/chart/scales";
 import { viewport } from "../../scripts/stores/chartViewport";
+import { Candle } from "packages/shared/src/types/candles";
 
 export let data: Candle[] = [];
 export let width = 600;
