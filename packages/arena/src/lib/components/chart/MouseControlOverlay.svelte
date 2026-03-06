@@ -1,6 +1,7 @@
 <script lang="ts">
 import { candleWidth } from "../../scripts/chart/scales";
 import { chartStore } from "../../scripts/stores/chartStore";
+import type { Candle } from "@tzar/shared";
 
 let {width, height, data, lineColor="white", chartId}:
 {

@@ -1,6 +1,7 @@
 <script lang="ts">
 import {onMount} from "svelte";
 import ChartHandler from "./ChartHandler.svelte";
+import type { Candle } from "@tzar/shared";
 
 let data: Candle[] = $state([]);
 let symbol: string = "AAPL";
@@ -23,9 +24,6 @@ const getMarketData = async () => {
         error = err.message;
     }
 };
-
-$inspect(error)
-$inspect(data)
 
 onMount(async () => {
     getMarketData();

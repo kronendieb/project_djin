@@ -1,5 +1,5 @@
 import { writable } from "svelte/store";
-import { Candle } from "packages/shared/src/types/candles";
+import type { Candle } from "@tzar/shared";
 
 export type ChartId = string;
 
@@ -48,6 +48,13 @@ const ensureChart = (state: Record<ChartId,ChartState>, id: ChartId) => {
 
 export const chartStore = {
     subscribe: charts.subscribe,
+
+    initChart(id: ChartId){
+        charts.update(state =>  {
+            ensureChart(state, id)
+            return state
+        })
+    },
 
     setChartData(id: ChartId, data: ChartState["data"]){
         charts.update(state => {

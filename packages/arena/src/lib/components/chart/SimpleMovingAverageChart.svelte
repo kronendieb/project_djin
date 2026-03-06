@@ -3,6 +3,7 @@ import { candleWidth, xScale, yScale } from "../../scripts/chart/scales";
 import { SMA } from "../../scripts/chart/SMA";
 import { PathByValues } from "../../scripts/chart/Paths";
 import { viewport } from "../../scripts/stores/chartViewport";
+import type { Candle } from "@tzar/shared";
 
 
 export let data: Candle[] = [];

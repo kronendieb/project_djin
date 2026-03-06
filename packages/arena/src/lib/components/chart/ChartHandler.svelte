@@ -6,6 +6,7 @@ import CandleMarket from "./CandleMarketChart.svelte";
 import MarketAxisChart from "./MarketAxisChart.svelte";
 import ChartDataMenu from "./ChartDataMenu.svelte";
 import { useResize } from "../../scripts/ui/useResize";
+import type { Candle } from "@tzar/shared";
 
 import { chartStore } from "../../scripts/stores/chartStore";
 
@@ -45,7 +46,7 @@ const onResize = (rect: DOMRectReadOnly) => {
 
 let menuOpen = $state(false);
 let menuValues = $state({
-    title: "1",
+    title: chartId,
 });
 
 const openMenu = (e:MouseEvent) => {
@@ -54,9 +55,14 @@ const openMenu = (e:MouseEvent) => {
     e.preventDefault();
 }
 const closeMenu = () => {menuOpen = false;}
+
+// This is a callback handler from ChartDataMenu Submit is triggered.
 const handleSubmit = (values:any) => {
     menuValues = values;
-    chartId = values.title;
+    if(chartId !== values.title){
+        chartId = values.title;
+        chartStore.initChart(chartId);
+    }
     menuOpen = false;
 }
 

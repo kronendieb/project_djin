@@ -1,5 +1,6 @@
 <script lang="ts">
 import { chartStore } from "../../scripts/stores/chartStore";
+import type { Candle } from "@tzar/shared";
 
 let {
     data = [],

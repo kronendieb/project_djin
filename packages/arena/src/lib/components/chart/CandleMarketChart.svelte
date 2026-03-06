@@ -1,7 +1,7 @@
 <script lang="ts">
     import { yScale, zoomAt, candleWidth } from "../../scripts/chart/scales";
     import { chartStore } from "../../scripts/stores/chartStore";
-
+    import type {Candle} from '@tzar/shared'
 
     let {
         data = [],

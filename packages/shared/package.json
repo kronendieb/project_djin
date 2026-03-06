@@ -20,6 +20,10 @@
     "express-session": "^1.18.2"
   },
   "exports": {
-      ".": "./dist/index.ts"
+      ".": {
+          "types": "./dist/index.d.ts",
+          "import": "./dist/index.ts",
+          "require": "./dist/index.d.ts"
+      }
   }
 }

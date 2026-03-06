@@ -11,7 +11,7 @@
     "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
     "paths": {
-      "@tzar/shared": ["packages/shared/src"]
+      "@tzar/shared": ["packages/shared/src/index.ts"]
     }
   }
 }
