@@ -15,7 +15,8 @@
         chartId: string,
     } = $props();
 
-    const viewport = $derived($chartStore[chartId].viewport)
+    const chart = $derived($chartStore[chartId]);
+    const viewport = $derived(chart.viewport);
     const candles = $derived(data.slice(viewport.start, viewport.start + viewport.count));
     const candleThickness = $derived(candleWidth(width, viewport.count));
     const min = $derived(Math.min(...candles.map(d => d.low)));

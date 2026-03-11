@@ -6,14 +6,12 @@ import ThemeToggle from "./lib/components/ui/ThemeToggle.svelte";
 </script>
 
 <main> 
-
     <SideMenu>
         <AuthButton />
         <ThemeToggle/>
     </SideMenu>
 
     <ChartWrapper />
-
 </main> 
 
 <style>

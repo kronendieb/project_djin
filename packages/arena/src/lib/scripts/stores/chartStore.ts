@@ -1,4 +1,4 @@
-import { writable } from "svelte/store";
+import { get, writable } from "svelte/store";
 import type { Candle } from "@tzar/shared";
 
 export type ChartId = string;
@@ -15,9 +15,13 @@ export type HudState = {
 }
 
 export type ChartData = {
+    token: string
     data: Candle[]
 }
 
+/*
+ * The Chart store state type.
+ * */
 export type ChartState = {
     viewport: Viewport
     hud: HudState
@@ -31,6 +35,7 @@ const initHud = {
 }
 
 const initData = {
+    token: "",
     data: [],
 }
 

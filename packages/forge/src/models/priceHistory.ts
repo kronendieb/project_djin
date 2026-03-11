@@ -1,8 +1,13 @@
 import { loadTokens, StoredTokens } from "../models/tokenStore";
 import axios from "axios";
 import app_env from "../models/environment";
+import type { Candle } from "@tzar/shared";
+import type { MarketParameters } from "@tzar/shared";
 
-export const getPriceHistory = async (token: StoredTokens, symbol: string) => {
+export const getPriceHistory = async (
+    token: StoredTokens,
+    params: MarketParameters
+) => {
 
     const response = await axios.get(
         `${app_env.marketdata_url}/pricehistory`,
@@ -11,11 +16,11 @@ export const getPriceHistory = async (token: StoredTokens, symbol: string) => {
                 Authorization: `Bearer ${token.access_token}`,
             },
             params: {
-                symbol,
-                periodType: "year",
-                period: 1,
-                frequencyType: "daily",
-                frequency: 1,
+                symbol: params.symbol,
+                periodType: params.periodType,
+                period: params.period,
+                frequencyType: params.frequencyType,
+                frequency: params.frequency,
                 needExtendedHoursData: false,
             },
         }

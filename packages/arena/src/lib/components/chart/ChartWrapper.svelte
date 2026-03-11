@@ -2,31 +2,31 @@
 import {onMount} from "svelte";
 import ChartHandler from "./ChartHandler.svelte";
 import type { Candle } from "@tzar/shared";
+import type { MarketParameters } from "@tzar/shared";
+import { fetchMarketData } from "../../scripts/chart/marketFetch";
 
 let data: Candle[] = $state([]);
-let symbol: string = "AAPL";
 
 let container: HTMLElement;
 let chartCount = 4;
 
 let error:string = $state("");
-const getMarketData = async () => {
+const props = {
+    symbol: "AAPL",
+    periodType: "year",
+    period: "1",
+    frequencyType: "daily",
+    frequency: "1"
+} as MarketParameters;
+
+$effect.pre(() => {
     try{
-        const res = await fetch(`/api/marketdata/price-history/${symbol}`);
-        const body = await res.json();
-
-        if(!res.ok){
-            throw new Error(body?.error ?? "Unknown Server Error");
-        }
-
-        data = body;
-    } catch (err: any){
+        fetchMarketData(props).then((d) => {
+            data  = d;
+        }).catch((err)=> {error=err.message;});
+    }catch (err: any){
         error = err.message;
     }
-};
-
-onMount(async () => {
-    getMarketData();
 })
 
 const chartColumns = $derived(Math.ceil(Math.sqrt(chartCount)));

@@ -1,5 +1,5 @@
-export * from "./types/session";
 export type { Candle } from "./types/candles";
+export type { MarketParameters } from "./types/marketParameters.ts";
 export interface RedirectURL {
     url: string;
 }

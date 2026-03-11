@@ -24,8 +24,11 @@ let {
     children?: Snippet,
 } = $props();
 
+$effect.pre(() => {
+    chartStore.initChart(chartId);
+});
+
 let svgElement: SVGSVGElement;
-chartStore.setViewport(chartId,{start:0, count: 100});
 
 const onMouseMove = (e: MouseEvent) => {
     const rect = svgElement.getBoundingClientRect()
@@ -59,10 +62,7 @@ const closeMenu = () => {menuOpen = false;}
 // This is a callback handler from ChartDataMenu Submit is triggered.
 const handleSubmit = (values:any) => {
     menuValues = values;
-    if(chartId !== values.title){
-        chartId = values.title;
-        chartStore.initChart(chartId);
-    }
+    chartId = values.title;
     menuOpen = false;
 }
 
