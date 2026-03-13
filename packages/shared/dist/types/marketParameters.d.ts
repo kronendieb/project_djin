@@ -5,4 +5,7 @@ export type MarketParameters = {
     frequencyType: string;
     frequency: string;
 };
+export declare const PeriodTypes: Record<string, string[]>;
+export declare const PeriodToFrequencyTypes: Record<string, string[]>;
+export declare const FrequencyTypes: Record<string, string[]>;
 //# sourceMappingURL=marketParameters.d.ts.map

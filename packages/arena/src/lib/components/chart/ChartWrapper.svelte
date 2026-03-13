@@ -10,25 +10,6 @@ let data: Candle[] = $state([]);
 let container: HTMLElement;
 let chartCount = 4;
 
-let error:string = $state("");
-const props = {
-    symbol: "AAPL",
-    periodType: "year",
-    period: "1",
-    frequencyType: "daily",
-    frequency: "1"
-} as MarketParameters;
-
-$effect.pre(() => {
-    try{
-        fetchMarketData(props).then((d) => {
-            data  = d;
-        }).catch((err)=> {error=err.message;});
-    }catch (err: any){
-        error = err.message;
-    }
-})
-
 const chartColumns = $derived(Math.ceil(Math.sqrt(chartCount)));
 
 </script>
@@ -38,7 +19,7 @@ const chartColumns = $derived(Math.ceil(Math.sqrt(chartCount)));
 >
     <!-- Current visible Charts overlayed -->
     {#each Array(chartCount) as _, i}
-        <ChartHandler data={data} chartId={"1"}>
+        <ChartHandler chartId={"1"}>
         </ChartHandler>
     {/each}
 

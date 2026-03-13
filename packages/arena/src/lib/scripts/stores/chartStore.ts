@@ -1,5 +1,5 @@
 import { get, writable } from "svelte/store";
-import type { Candle } from "@tzar/shared";
+import { PeriodTypes, type Candle, type MarketParameters } from "@tzar/shared";
 
 export type ChartId = string;
 
@@ -15,8 +15,8 @@ export type HudState = {
 }
 
 export type ChartData = {
-    token: string
-    data: Candle[]
+    params: MarketParameters
+    candles: Candle[]
 }
 
 /*
@@ -28,16 +28,22 @@ export type ChartState = {
     data: ChartData
 }
 
-const initHud = {
+const initHud:HudState = {
     x: 0,
     y: 0,
     hovered: false,
 }
 
-const initData = {
-    token: "",
-    data: [],
-}
+const initData:ChartData = {
+    candles: [],
+    params: {
+        symbol: "$SPX",
+        periodType: "year",
+        period: "1",
+        frequencyType: "daily",
+        frequency: "1",
+    }
+};
 
 export const charts = writable<Record<ChartId, ChartState>>({})
 

@@ -5,28 +5,46 @@ import MouseControlOverlay from "./MouseControlOverlay.svelte";
 import CandleMarket from "./CandleMarketChart.svelte";
 import MarketAxisChart from "./MarketAxisChart.svelte";
 import ChartDataMenu from "./ChartDataMenu.svelte";
+
 import { useResize } from "../../scripts/ui/useResize";
 import type { Candle } from "@tzar/shared";
-
+import type { MarketParameters } from "@tzar/shared";
 import { chartStore } from "../../scripts/stores/chartStore";
+import { fetchMarketData } from "../../scripts/chart/marketFetch";
+import type { ChartMenuProperties } from "../../scripts/chart/chartMenuProperties";
 
+// TODO: delete the data property an add it to the store.
 let {
-    data = [],
     chartId,
     width=0,
     height=0,
     children
 }:{
-    data: Candle[],
     chartId:string,
     width?: number,
     height?: number,
     children?: Snippet,
 } = $props();
 
+const chart = $derived($chartStore[chartId]);
+const data = $derived($chartStore[chartId].data.candles)
+const marketParams = $derived(chart.data.params);
+
+let error = $state("");
 $effect.pre(() => {
     chartStore.initChart(chartId);
+    if(data.length < 1){
+    fetchMarketData(marketParams).then((d) => {
+        chartStore.setChartData(chartId, {
+            candles: d,
+            params: marketParams,
+        })
+    }).catch((err) => {error = err.message})
+    }
+    console.log(`${chartId} updated their data`);
 });
+$inspect(error);
+$inspect(data);
 
 let svgElement: SVGSVGElement;
 
@@ -48,9 +66,6 @@ const onResize = (rect: DOMRectReadOnly) => {
 }
 
 let menuOpen = $state(false);
-let menuValues = $state({
-    title: chartId,
-});
 
 const openMenu = (e:MouseEvent) => {
     if (e.button !== 1) return;
@@ -60,9 +75,14 @@ const openMenu = (e:MouseEvent) => {
 const closeMenu = () => {menuOpen = false;}
 
 // This is a callback handler from ChartDataMenu Submit is triggered.
-const handleSubmit = (values:any) => {
-    menuValues = values;
-    chartId = values.title;
+const handleSubmit = (values:ChartMenuProperties) => {
+    chartId = values.id;
+    fetchMarketData(values.params).then((d) => {
+        chartStore.setChartData(chartId, {
+            candles: d,
+            params: values.params,
+        })
+    }).catch((err) => {error = err.message});
     menuOpen = false;
 }
 
@@ -77,7 +97,7 @@ const handleSubmit = (values:any) => {
     role="img"
 >
     {#if menuOpen}
-        <ChartDataMenu onClose={closeMenu} bind:values={menuValues} onSubmit={handleSubmit}/>
+        <ChartDataMenu chartId={chartId} onClose={closeMenu} onSubmit={handleSubmit}/>
     {/if}
     <svg bind:this={svgElement}
         width={width} height={height} viewBox={`0 0 ${width} ${height}`}
