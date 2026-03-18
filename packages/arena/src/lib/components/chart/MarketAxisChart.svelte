@@ -3,7 +3,6 @@ import { chartStore } from "../../scripts/stores/chartStore";
 import type { Candle } from "@tzar/shared";
 
 let {
-    data = [],
     chartId,
     width = 600,
     height = 300,
@@ -12,7 +11,6 @@ let {
     xticks = 6,
     yticks = 5,
 }:{
-    data?: Candle[],
     chartId: string,
     width: number,
     height: number,
@@ -24,8 +22,8 @@ let {
 
 let textOffset = 20;
 
-const viewport = $derived($chartStore[chartId].viewport);
-const candles = $derived(data.slice(viewport.start, viewport.start + viewport.count));
+const viewport = $derived($chartStore[chartId]?.viewport);
+const candles = $derived($chartStore[chartId]?.data.candles.slice(viewport.start, viewport.start + viewport.count));
 
 const max = $derived(Math.max(...candles.map(d => d.high)));
 const min = $derived(Math.max(...candles.map(d => d.low)));

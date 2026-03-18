@@ -14,6 +14,7 @@
 
     --color-bg: #181A1E;
     --color-surface: #1e293b;
+    --color-over-surface: rgba(50, 60, 76, 0.5);
     --color-text: #e5e7eb;
     --color-primary: #324098;
     --color-border: #646cff;

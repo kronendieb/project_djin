@@ -5,10 +5,10 @@ import MouseControlOverlay from "./MouseControlOverlay.svelte";
 import CandleMarket from "./CandleMarketChart.svelte";
 import MarketAxisChart from "./MarketAxisChart.svelte";
 import ChartDataMenu from "./ChartDataMenu.svelte";
+import ViewportSlider from "./ViewportSlider.svelte";
+import SimpleMovingAverageChart from "./SimpleMovingAverageChart.svelte";
 
 import { useResize } from "../../scripts/ui/useResize";
-import type { Candle } from "@tzar/shared";
-import type { MarketParameters } from "@tzar/shared";
 import { chartStore } from "../../scripts/stores/chartStore";
 import { fetchMarketData } from "../../scripts/chart/marketFetch";
 import type { ChartMenuProperties } from "../../scripts/chart/chartMenuProperties";
@@ -27,24 +27,27 @@ let {
 } = $props();
 
 const chart = $derived($chartStore[chartId]);
-const data = $derived($chartStore[chartId].data.candles)
+const candles = $derived($chartStore[chartId].data.candles)
 const marketParams = $derived(chart.data.params);
+let currentViewport = $derived(chart.viewport);
 
 let error = $state("");
 $effect.pre(() => {
     chartStore.initChart(chartId);
-    if(data.length < 1){
-    fetchMarketData(marketParams).then((d) => {
-        chartStore.setChartData(chartId, {
-            candles: d,
-            params: marketParams,
-        })
-    }).catch((err) => {error = err.message})
+    if(candles.length < 1){
+        fetchMarketData(marketParams).then((d) => {
+            chartStore.setChartData(chartId, {
+                candles: d,
+                params: marketParams,
+            })
+        }).catch((err) => {error = err.message})
     }
     console.log(`${chartId} updated their data`);
 });
-$inspect(error);
-$inspect(data);
+
+$effect(() => {
+    chartStore.setViewport(chartId, currentViewport);
+})
 
 let svgElement: SVGSVGElement;
 
@@ -85,9 +88,9 @@ const handleSubmit = (values:ChartMenuProperties) => {
     }).catch((err) => {error = err.message});
     menuOpen = false;
 }
+$inspect(chart.viewport);
 
 </script>
-
 
 <div class="chart" 
     use:useResize={onResize}
@@ -96,6 +99,7 @@ const handleSubmit = (values:ChartMenuProperties) => {
     onpointerdown={openMenu}
     role="img"
 >
+    <ViewportSlider chartId={chartId} width={width}></ViewportSlider>
     {#if menuOpen}
         <ChartDataMenu chartId={chartId} onClose={closeMenu} onSubmit={handleSubmit}/>
     {/if}
@@ -103,25 +107,32 @@ const handleSubmit = (values:ChartMenuProperties) => {
         width={width} height={height} viewBox={`0 0 ${width} ${height}`}
         role="img"
         aria-label="Candlestick"
+        pointer-events="none"
     >
         {@render children?.()}
-        <CandleMarket data={data} height={height} width={width} chartId={chartId}></CandleMarket>
-        <MarketAxisChart data={data} height={height} width={width} chartId={chartId}/>
-        <MouseControlOverlay data={data} height={height} width={width} chartId={chartId}/>
+        <MarketAxisChart height={height} width={width} chartId={chartId}/>
+        <CandleMarket height={height} width={width} chartId={chartId}/>
+        <MouseControlOverlay height={height} width={width} chartId={chartId}/>
+        <SimpleMovingAverageChart height={height} width={width} chartId={chartId}/>
     </svg>
 </div>
 
 <style>
+
 .chart{
     position: relative;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     background-color: var(--color-surface);
     width: 100%;
     height: 100%;
 }
+
 .chart>svg{
     position:absolute;
+    z-index: 10;
 }
+
 </style>

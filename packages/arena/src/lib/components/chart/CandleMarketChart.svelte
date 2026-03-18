@@ -4,23 +4,22 @@
     import type {Candle} from '@tzar/shared'
 
     let {
-        data = [],
         width = 600,
         height = 300,
         chartId,
     }:{
-        data: Candle[],
         width: number,
         height: number,
         chartId: string,
     } = $props();
 
-    const chart = $derived($chartStore[chartId]);
-    const viewport = $derived(chart.viewport);
-    const candles = $derived(data.slice(viewport.start, viewport.start + viewport.count));
+    let padding = $state(50);
+
+    const viewport = $derived($chartStore[chartId]?.viewport);
+    const candles = $derived($chartStore[chartId]?.data.candles.slice(viewport.start, viewport.start + viewport.count));
     const candleThickness = $derived(candleWidth(width, viewport.count));
-    const min = $derived(Math.min(...candles.map(d => d.low)));
-    const max = $derived(Math.max(...candles.map(d => d.high)));
+    const min = $derived(Math.min(...candles.map(d => d.low - padding)));
+    const max = $derived(Math.max(...candles.map(d => d.high + padding)));
 
     const y = (p: number) => {
         return yScale(p, min, max, height);
@@ -29,7 +28,7 @@
 </script>
 
 <g>
-    {#each data as c, i}
+    {#each candles as c, i}
         {@const x = i * candleThickness + candleThickness / 2}
         {@const bullish = c.close >= c.open}
 
