@@ -13,10 +13,20 @@
     -moz-osx-font-smoothing: grayscale;
 
     --color-bg: #181A1E;
-    --color-surface: #1e293b;
-    --color-over-surface: rgba(50, 60, 76, 0.5);
-    --color-text: #e5e7eb;
-    --color-primary: #324098;
+    --color-bg-dark: #11151D;
+    --color-bg-light: #3A3E45;
+    --color-surface: #1E293B;
+    --color-surface-dark: #121D2F;
+    --color-surface-light: #323C4C;
+    --color-text: #E5E7EB;
+    --color-text-dark: #BFC5D1;
+    --color-text-light: #FDFDFD;
+    --color-primary: #239631;
+    --color-primary-dark: #11781E;
+    --color-primary-light: #41A94E;
+    --color-secondary: #D41B2D;
+    --color-secondary-dark: #A80C1B;
+    --color-secondary-light: #E24655;
     --color-border: #646cff;
     --color-button: #12151D;
 }

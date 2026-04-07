@@ -1,6 +1,8 @@
 <script lang="ts">
+    import { candleWidth } from "../../scripts/chart/scales";
 import { chartStore } from "../../scripts/stores/chartStore";
 import type { Candle } from "@tzar/shared";
+    import { xScale } from "../../scripts/chart/scales";
 
 let {
     chartId,
@@ -24,15 +26,10 @@ let textOffset = 20;
 
 const viewport = $derived($chartStore[chartId]?.viewport);
 const candles = $derived($chartStore[chartId]?.data.candles.slice(viewport.start, viewport.start + viewport.count));
+const thickness = $derived(candleWidth(width, candles.length));
 
 const max = $derived(Math.max(...candles.map(d => d.high)));
-const min = $derived(Math.max(...candles.map(d => d.low)));
-
-const xScale = (data: Candle[], time:number,  width:number) => {
-    const t0 = data[0].time;
-    const t1 = data[data.length - 1].time;
-    return ((time - t0) / (t1 - t0)) * width;
-}
+const min = $derived(Math.min(...candles.map(d => d.low)));
 
 const getXTicks = (data: Candle[], width:number, ticks:number) => {
     if(!data || data.length === 0){
@@ -43,7 +40,7 @@ const getXTicks = (data: Candle[], width:number, ticks:number) => {
         const idx = Math.floor((i / (ticks - 1)) * (data.length - 1));
 
         return {
-            x: xScale(data, data[idx].time, width),
+            x: xScale(idx, data.length, width) + thickness / 2,
             label: new Date(data[idx].time).toLocaleDateString()
         }
     })
@@ -83,14 +80,14 @@ const yTicks = $derived(getYTicks(candles, height, min, max, yticks));
             x2={t.x}
             y1={0}
             y2={height}
-            stroke={dashColor}
+            stroke="var(--color-text-dark)"
             stroke-dasharray="5,20"
         ></line>
         <text 
             x={t.x}
             y={textOffset}
             font-size="10"
-            fill="#aaa"
+            fill="var(--color-text)"
             text-anchor="end"
             dominant-baseline="middle"
             transform={`rotate(-90 ${t.x + 10} ${textOffset})`}
@@ -103,31 +100,15 @@ const yTicks = $derived(getYTicks(candles, height, min, max, yticks));
             x2={width}
             y1={t.y}
             y2={t.y}
-            stroke={dashColor}
+            stroke="var(--color-text-dark)"
             stroke-dasharray="5,10"
         ></line>
         <text 
             x={4}
             y={t.y - 2}
             font-size="10"
-            fill="#aaa"
+            fill="var(--color-text)"
             text-anchor="start"
         >{t.label}</text>
     {/each}
-
-    <line
-        x1={0}
-        y1={0}
-        x2={0}
-        y2={height}
-        stroke={lineColor}
-    ></line>
-    <line
-        x1={0}
-        y1={height}
-        x2={width}
-        y2={height}
-        stroke={lineColor}
-    ></line>
-
 </g>

@@ -3,6 +3,7 @@
 .env
 *.key
 *.crt
+*.pid
 node_modules/
 forge/node_modules/
 arena/node_modules/

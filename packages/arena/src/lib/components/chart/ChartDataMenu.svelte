@@ -1,33 +1,39 @@
 <script lang="ts">
 
-import type { ChartMenuProperties } from "../../scripts/chart/chartMenuProperties";
 import { FrequencyTypes, PeriodTypes, PeriodToFrequencyTypes } from "@tzar/shared";
 import { chartStore } from "../../scripts/stores/chartStore";
 import { untrack } from "svelte";
+import { fetchMarketData } from "../../scripts/chart/marketFetch";
 
-let {onClose, onSubmit, chartId}:
+let {onClose, chartId = $bindable()}:
 {
     onClose:()=>void,
-    onSubmit:(values:ChartMenuProperties)=>void,
     chartId: string,
 }= $props();
 
+let menuId = $state(chartId);
 $effect.pre(()=> {
     chartStore.initChart(chartId);
 })
 
 let chartParams = $state($chartStore[chartId].data.params);
 $effect(() => {
-    chartId;
+    chartId = menuId;
     chartParams = untrack(() => $chartStore[chartId].data.params);
 })
 
-function stop(e: MouseEvent){
-    e.stopPropagation();
-}
+let error = $state("");
 function submit(){
-    onSubmit({id:chartId, params: chartParams});
+    chartId = menuId;
+    fetchMarketData(chartParams).then((d) => {
+        chartStore.setChartData(chartId, {
+            candles: d,
+            params: chartParams,
+        })
+    }).catch((err) => {error = err.message});
+    onClose();
 }
+$inspect(error);
 
 const availablePeriods = $derived(chartParams.periodType ?
     PeriodTypes[chartParams.periodType] : []);
@@ -40,100 +46,77 @@ const availableFrequencies = $derived(chartParams.frequencyType ?
 
 </script>
 
-<div class="overlay" onpointerdown={onClose}>
-    <div class="menu" onpointerdown={stop} >
+<div class="menu" >
 
-        <label for="title">
-            <span>Title</span>
-            <input type="text" bind:value={chartId}/>
-        </label>
+    <label for="title">
+        Title
+    </label>
+    <input type="text" bind:value={menuId}/>
 
-        <label for="symbol">
-            <span>Symbol</span>
-            <input type="text" bind:value={chartParams.symbol}/>
-        </label>
+    <label for="symbol">
+        Symbol
+    </label>
+    <input type="text" bind:value={chartParams.symbol}/>
 
-        <label for="periodType">
-            <span> Period Type </span>
-            <select bind:value={chartParams.periodType}>
-                <option value="">-- Select a period type --</option>
-                {#each Object.keys(PeriodTypes) as type}
-                    <option value={type}>{type}</option>
-                {/each}
-            </select>
-        </label>
+    <label for="periodType">
+        Period Type
+    </label>
+    <select bind:value={chartParams.periodType}>
+        {#each Object.keys(PeriodTypes) as type}
+            <option value={type}>{type}</option>
+        {/each}
+    </select>
 
-        <label for="period">Period
-            <select bind:value={chartParams.period} disabled={!chartParams.periodType}>
-                <option value="">-- Select a period --</option>
-                {#each availablePeriods as periods}
-                    <option value={periods}>{periods}</option>
-                {/each}
-            </select>
-        </label>
+    <label for="period">Period
+    </label>
+    <select bind:value={chartParams.period} disabled={!chartParams.periodType}>
+        {#each availablePeriods as periods}
+            <option value={periods}>{periods}</option>
+        {/each}
+    </select>
 
 
-        <label for="frequencyType">Frequency Type
-            <select bind:value={chartParams.frequencyType}>
-                <option value="">-- Select a frequency type --</option>
-                {#each availableFrequencyTypes as type}
-                    <option value={type}>{type}</option>
-                {/each}
-            </select>
-        </label>
+    <label for="frequencyType">Frequency Type
+    </label>
+    <select bind:value={chartParams.frequencyType}>
+        {#each availableFrequencyTypes as type}
+            <option value={type}>{type}</option>
+        {/each}
+    </select>
 
-        <label for="frequency">Frequency
-            <select bind:value={chartParams.frequency}>
-                <option value="">-- Select a frequency --</option>
-                {#each availableFrequencies as freq}
-                    <option value={freq}>{freq}</option>
-                {/each}
-            </select>
-        </label>
+    <label for="frequency">Frequency
+    </label>
+    <select bind:value={chartParams.frequency}>
+        {#each availableFrequencies as freq}
+            <option value={freq}>{freq}</option>
+        {/each}
+    </select>
 
-        <div>
-            <button onpointerdown={submit}>Apply</button>
-            <button onpointerdown={onClose}>Close</button>
-        </div>
+    <div class="subButtons">
+        <button onpointerdown={submit}>Apply</button>
+        <button onpointerdown={onClose}>Close</button>
     </div>
 </div>
 
 <style>
 
-.overlay {
-    position: absolute;
-    background-color: rgb(from var(--color-bg) r g b / 0.8);
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 100;
-}
-
 .menu {
     background:var(--color-bg);
     padding: 1rem;
     border-radius: 8px;
-    display: flex;
-    gap: 5px;
-    flex-direction: column;
+    display: grid;
+    gap: 5px 10px;
+    grid-template-columns: auto 1fr;
     align-items: center;
-    justify-content: center;
 }
 
-.menu label {
-    display:flex;
-    flex-direction: row;
-    gap: 10px;
-}
-.menu label span{
+.menu label{
     text-align: right;
-    flex-shrink: 0;
+    align-items: right;
 }
-.menu label input,
-.menu label select{
-    flex:1;
-    max-width: 24em;
+
+.menu .subButtons{
+    grid-column: 1/-1;
 }
+
 </style>

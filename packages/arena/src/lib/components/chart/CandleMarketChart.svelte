@@ -13,13 +13,11 @@
         chartId: string,
     } = $props();
 
-    let padding = $state(50);
-
     const viewport = $derived($chartStore[chartId]?.viewport);
     const candles = $derived($chartStore[chartId]?.data.candles.slice(viewport.start, viewport.start + viewport.count));
     const candleThickness = $derived(candleWidth(width, viewport.count));
-    const min = $derived(Math.min(...candles.map(d => d.low - padding)));
-    const max = $derived(Math.max(...candles.map(d => d.high + padding)));
+    const min = $derived(Math.min(...candles.map(d => d.low)));
+    const max = $derived(Math.max(...candles.map(d => d.high)));
 
     const y = (p: number) => {
         return yScale(p, min, max, height);
@@ -37,7 +35,7 @@
             x2={x}
             y1={y(c.high)}
             y2={y(c.low)}
-            stroke={bullish ? "green" : "red"}
+            stroke={bullish ? "var(--color-primary)" : "var(--color-secondary)"}
             stroke-width="1"
         ></line>
         <rect
@@ -45,7 +43,7 @@
             width = {candleThickness * 0.6}
             y={y(Math.max(c.open, c.close))}
             height={Math.max(1, Math.abs(y(c.open) - y(c.close)))}
-            fill={bullish ? "green" : "red"}
+            fill={bullish ? "var(--color-primary)" : "var(--color-secondary)"}
         ></rect>
     {/each}
 </g>

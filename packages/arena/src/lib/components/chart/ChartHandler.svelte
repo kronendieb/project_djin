@@ -5,6 +5,7 @@ import MouseControlOverlay from "./MouseControlOverlay.svelte";
 import CandleMarket from "./CandleMarketChart.svelte";
 import MarketAxisChart from "./MarketAxisChart.svelte";
 import ChartDataMenu from "./ChartDataMenu.svelte";
+import ChartMenu from "./ChartMenu.svelte";
 import ViewportSlider from "./ViewportSlider.svelte";
 import SimpleMovingAverageChart from "./SimpleMovingAverageChart.svelte";
 
@@ -29,7 +30,6 @@ let {
 const chart = $derived($chartStore[chartId]);
 const candles = $derived($chartStore[chartId].data.candles)
 const marketParams = $derived(chart.data.params);
-let currentViewport = $derived(chart.viewport);
 
 let error = $state("");
 $effect.pre(() => {
@@ -44,10 +44,6 @@ $effect.pre(() => {
     }
     console.log(`${chartId} updated their data`);
 });
-
-$effect(() => {
-    chartStore.setViewport(chartId, currentViewport);
-})
 
 let svgElement: SVGSVGElement;
 
@@ -75,20 +71,6 @@ const openMenu = (e:MouseEvent) => {
     menuOpen = true;
     e.preventDefault();
 }
-const closeMenu = () => {menuOpen = false;}
-
-// This is a callback handler from ChartDataMenu Submit is triggered.
-const handleSubmit = (values:ChartMenuProperties) => {
-    chartId = values.id;
-    fetchMarketData(values.params).then((d) => {
-        chartStore.setChartData(chartId, {
-            candles: d,
-            params: values.params,
-        })
-    }).catch((err) => {error = err.message});
-    menuOpen = false;
-}
-$inspect(chart.viewport);
 
 </script>
 
@@ -101,7 +83,7 @@ $inspect(chart.viewport);
 >
     <ViewportSlider chartId={chartId} width={width}></ViewportSlider>
     {#if menuOpen}
-        <ChartDataMenu chartId={chartId} onClose={closeMenu} onSubmit={handleSubmit}/>
+        <ChartMenu bind:chartId={chartId} onClose={()=>{menuOpen=false}}></ChartMenu>
     {/if}
     <svg bind:this={svgElement}
         width={width} height={height} viewBox={`0 0 ${width} ${height}`}
@@ -128,6 +110,7 @@ $inspect(chart.viewport);
     background-color: var(--color-surface);
     width: 100%;
     height: 100%;
+    overflow: hidden;
 }
 
 .chart>svg{

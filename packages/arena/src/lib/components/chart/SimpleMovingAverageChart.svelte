@@ -5,7 +5,7 @@ import { PathByValues } from "../../scripts/chart/Paths";
 import { chartStore } from "../../scripts/stores/chartStore";
 
 let {
-    width, height, lineColor = "yellow", period = 20, chartId
+    width, height, lineColor = "yellow", period = 15, chartId
 }: {
     chartId:string,
     width:number,
@@ -27,19 +27,20 @@ const candles = $derived($chartStore[chartId]?.data.candles.slice(viewport.start
 const thickness = $derived(candleWidth(width, viewport.count));
 const min = $derived( Math.min(... candles.map(d => d.low)));
 const max = $derived(Math.max(... candles.map(d => d.high)));
-const path = $derived(PathByValues(SMA(candles, period), x, y));
+const sma = $derived(SMA($chartStore[chartId]?.data.candles, period));
+const path = $derived(PathByValues(sma.slice(viewport.start, viewport.start + viewport.count), x, y));
 
 </script>
 
-<svg {width} {height} viewBox={`0 0 ${width} ${height}`}
->
+<g>
     <path
         d={path}
         fill = "none"
         stroke = {lineColor}
         stroke-width = "1"
     ></path>
-</svg>
+</g>
+
 
 <style>
 
