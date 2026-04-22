@@ -4,7 +4,9 @@
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "module": "dist/index.js",
   "type": "module",
   "scripts": {
@@ -17,13 +19,14 @@
   "license": "ISC",
   "packageManager": "pnpm@10.15.0",
   "dependencies": {
+    "dinero.js": "^2.0.2",
     "express-session": "^1.18.2"
   },
   "exports": {
-      ".": {
-          "types": "./dist/index.d.ts",
-          "import": "./dist/index.js",
-          "require": "./dist/index.d.ts"
-      }
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.d.ts"
+    }
   }
 }

@@ -1,5 +1,6 @@
+import { type Candle } from "@tzar/shared";
 
-export const SMA = (data: Candle[], period):(number | null)[] => {
+export const SMA = (data: Candle[], period: number):(number | null)[] => {
     if(!data || data.length === 0) return [];
 
     const result: (number|null)[] = [];

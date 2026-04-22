@@ -91,6 +91,9 @@ importers:
 
   packages/shared:
     dependencies:
+      dinero.js:
+        specifier: ^2.0.2
+        version: 2.0.2
       express-session:
         specifier: ^1.18.2
         version: 1.18.2
@@ -644,6 +647,10 @@ packages:
   diff@4.0.2:
     resolution: {integrity: sha512-58lmxKSA4BNyLz+HHMUzlOEpg09FV+ev6ZMe3vJihgdxzgcwZ8VoEEPmALCZG9LmqfVoNMMKpttIYTVG6uDY7A==}
     engines: {node: '>=0.3.1'}
+
+  dinero.js@2.0.2:
+    resolution: {integrity: sha512-d+4egJTvNinkb66KSed11Daqz6MWaOHzyalLu6h3p+BLrsmwKFjHjvOKivOWeM7WyoX89te+xx4cKI6zrDtCfQ==}
+    engines: {node: '>=20.0.0'}
 
   dotenv@17.2.3:
     resolution: {integrity: sha512-JVUnt+DUIzu87TABbhPmNfVdBDt18BLOWjMUFJMSi/Qqg7NTYtabbvSNJGOJ7afbRuv9D/lngizHtP7QyLQ+9w==}
@@ -1770,6 +1777,8 @@ snapshots:
   depd@2.0.0: {}
 
   diff@4.0.2: {}
+
+  dinero.js@2.0.2: {}
 
   dotenv@17.2.3: {}
 

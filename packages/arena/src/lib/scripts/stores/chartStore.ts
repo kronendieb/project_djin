@@ -1,5 +1,6 @@
 import { get, writable } from "svelte/store";
-import { PeriodTypes, type Candle, type MarketParameters } from "@tzar/shared";
+import { PeriodTypes, Position, type Candle, type MarketParameters } from "@tzar/shared";
+import { Money } from "@tzar/shared";
 
 export type ChartId = string;
 
@@ -17,6 +18,12 @@ export type HudState = {
 export type ChartData = {
     params: MarketParameters
     candles: Candle[]
+}
+
+export type StrategyData = {
+    paper: Money
+    positions: Position[]
+    quantity: number
 }
 
 /*
@@ -71,6 +78,15 @@ export const chartStore = {
         charts.update(state => {
             ensureChart(state, id)
             state[id].data = data
+
+            const candleCount = data.candles.length;
+            const currentViewport = state[id].viewport;
+
+            state[id].viewport = {
+                start: 0,
+                count: Math.min(currentViewport.count, candleCount)
+            }
+
             return state
         })
     },

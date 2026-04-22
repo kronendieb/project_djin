@@ -1,6 +1,19 @@
-export type {Candle} from "./types/candles";
-export type {MarketParameters} from "./types/marketParameters";
-export {FrequencyTypes,  PeriodToFrequencyTypes, PeriodTypes} from "./types/marketParameters";
+export {
+    Candle,
+    Money,
+    Position,
+    PositionJSON,
+    Direction,
+    MarketParameters,
+    FrequencyTypes,
+    PeriodToFrequencyTypes,
+    PeriodTypes
+} from "./types"
+
+export {
+    Strategy,
+    BacktestResult
+} from "./strategy";
 
 export interface RedirectURL {
     url: string;

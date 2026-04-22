@@ -14,7 +14,6 @@ import { chartStore } from "../../scripts/stores/chartStore";
 import { fetchMarketData } from "../../scripts/chart/marketFetch";
 import type { ChartMenuProperties } from "../../scripts/chart/chartMenuProperties";
 
-// TODO: delete the data property an add it to the store.
 let {
     chartId,
     width=0,
@@ -34,6 +33,8 @@ const marketParams = $derived(chart.data.params);
 let error = $state("");
 $effect.pre(() => {
     chartStore.initChart(chartId);
+});
+$effect(() => {
     if(candles.length < 1){
         fetchMarketData(marketParams).then((d) => {
             chartStore.setChartData(chartId, {
